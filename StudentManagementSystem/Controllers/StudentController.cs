@@ -15,6 +15,7 @@ namespace StudentManagementSystem.Controllers
 
         public IActionResult Index()
         {
+            // This is Comment for Git Check
             var students = _context.StudentInfos
                                    
                                    .ToList();
