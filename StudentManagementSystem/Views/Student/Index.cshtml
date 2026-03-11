@@ -1,0 +1,80 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.StudentInfo>
+
+@{
+    ViewData["Title"] = "Student List";
+}
+
+<h2>Student List</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Student</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <p style="color:gray;">No students found.</p>
+}
+else
+{
+    <table border="1" cellpadding="8" style="border-collapse:collapse;">
+        <thead style="background-color:#f2f2f2;">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FirstName @item.LastName</td>
+                    <td>@item.Email</td>
+                    <td>@item.ContactNo</td>
+                    <td>@item.Age</td>
+
+                    <td>
+                        @if (item.Status)
+                        {
+                            <span style="color:green;font-weight:bold;">Active</span>
+                        }
+                        else
+                        {
+                            <span style="color:red;font-weight:bold;">Inactive</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImagePath))
+                        {
+                            <img src="@item.ImagePath"
+                                 width="60"
+                                 height="60"
+                                 style="object-fit:cover;border-radius:5px;" />
+                        }
+                        else
+                        {
+                            <span style="color:gray;">No Image</span>
+                        }
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit"
+                           asp-route-id="@item.StudentId">Edit</a> |
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.StudentId"
+                           onclick="return confirm('Are you sure you want to delete this student?');">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

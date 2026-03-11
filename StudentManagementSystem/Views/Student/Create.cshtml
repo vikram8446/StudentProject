@@ -1,0 +1,171 @@
+﻿@model StudentManagementSystem.Models.StudentInfo
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<h2>Student Registration</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+
+   <div>asp-validations-summary="All" class="text-danger"></div>
+    <div>
+        <label>First Name *</label>
+        <input asp-for="FirstName" class="form-control" required />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Middle Name</label>
+        <input asp-for="MiddleName" class="form-control" />
+    </div>
+
+    <div>
+        <label>Last Name *</label>
+        <input asp-for="LastName" class="form-control" required />
+    </div>
+
+    <div>
+        <label>DOB *</label>
+        <input asp-for="DOB" type="date" class="form-control" id="dob" required />
+    </div>
+
+    <div>
+        <label>Age</label>
+        <input asp-for="Age" class="form-control" id="age" readonly />
+    </div>
+
+    <!-- mobile number 10 digit only -->
+    <div>
+        <label>Contact No *</label>
+        <input asp-for="ContactNo"
+               class="form-control"
+               maxlength="10"
+               pattern="[0-9]{10}"
+               oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+               title="Enter valid 10 digit mobile number"
+               required />
+        <span asp-validation-for="ContactNo" class="text-danger"></span>
+    </div>
+
+    <!-- email  -->
+    <div>
+        <label>Email *</label>
+        <input asp-for="Email" type="email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Address</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div>
+        <label>Pincode</label>
+        <input asp-for="Pincode" class="form-control" />
+    </div>
+
+    <!-- country -->
+    <div>
+        <label>Country *</label>
+        <select asp-for="CountryId" id="CountryId" class="form-control" required>
+            <option value="">Select Country</option>
+            @foreach (var country in ViewBag.Countries)
+            {
+                <option value="@country.CountryId">@country.CountryName</option>
+            }
+        </select>
+    </div>
+
+    <!-- state select -->
+    <div>
+        <label>State *</label>
+        <select asp-for="StateId" id="StateId" class="form-control" required>
+            <option value="">Select State</option>
+        </select>
+    </div>
+
+    <!-- city select -->
+    <div>
+        <label>City *</label>
+        <select asp-for="CityId" id="CityId" class="form-control" required>
+            <option value="">Select City</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Amount *</label>
+        <input asp-for="Amount" type="number" class="form-control" required />
+    </div>
+
+    <!-- Active for new user add -->
+    <div>
+        <label>Status</label>
+        <input asp-for="Status" type="checkbox" checked />
+    </div>
+
+    <!-- optional image update -->
+    <div>
+        <label>Image Upload (.jpg, .jpeg, .png)</label>
+        <input type="file" name="ImageFile" accept=".jpg,.jpeg,.png" />
+    </div>
+
+    <br />
+
+    <button type="submit">Save</button>
+    <a asp-action="Index">Cancel</a>
+    
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    function calculateAge() {
+        var dob = new Date($("#dob").val());
+        var today = new Date();
+        var age = today.getFullYear() - dob.getFullYear();
+        $("#age").val(age);
+    }
+
+
+    $(document).ready(function () {
+        calculateAge();
+    });
+
+    $("#dob").change(function () {
+        calculateAge();
+    });
+
+
+    $("#CountryId").change(function () {
+
+        var countryId = $(this).val();
+
+        $.get('/Student/GetStates', { countryId: countryId }, function (data) {
+
+            $("#StateId").empty().append('<option value="">Select State</option>');
+
+            $.each(data, function (i, state) {
+                $("#StateId").append('<option value="' + state.stateId + '">' + state.stateName + '</option>');
+            });
+        });
+    });
+
+
+    $("#StateId").change(function () {
+
+        var stateId = $(this).val();
+
+        $.get('/Student/GetCities', { stateId: stateId }, function (data) {
+
+            $("#CityId").empty().append('<option value="">Select City</option>');
+
+            $.each(data, function (i, city) {
+                $("#CityId").append('<option value="' + city.cityId + '">' + city.cityName + '</option>');
+            });
+        });
+    });
+
+</script>
